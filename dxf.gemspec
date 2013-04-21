@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |gem|
   gem.name          = "dxf"
-  gem.version       = 0
+  gem.version       = 0.1
   gem.authors       = ["Brandon Fosdick"]
   gem.email         = ["bfoz@bfoz.net"]
   gem.description   = %q{Read and write DXF files using Ruby}
