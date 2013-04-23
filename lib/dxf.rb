@@ -17,6 +17,10 @@ Reading and writing of files using AutoCAD's {http://en.wikipedia.org/wiki/AutoC
 	    @container = container
 	end
 
+	def format_value(value)
+	    "%g" % value.to_f
+	end
+
 	def to_s
 	    from_sketch(container)
 	end
@@ -35,7 +39,12 @@ Reading and writing of files using AutoCAD's {http://en.wikipedia.org/wiki/AutoC
 	    end
 	    first = Point[first] unless first.is_a?(Geometry::Point)
 	    last = Point[last] unless last.is_a?(Geometry::Point)
-	    [0, 'LINE', 8, layer, 10, first.x, 20, first.y, 11, last.x, 21, last.y]
+	    [ 0, 'LINE',
+	      8, layer,
+	     10, format_value(first.x),
+	     20, format_value(first.y),
+	     11, format_value(last.x),
+	     21, format_value(last.y)]
 	end
 
 	def section(name)
@@ -54,16 +63,16 @@ Reading and writing of files using AutoCAD's {http://en.wikipedia.org/wiki/AutoC
 		case element
 		    when Geometry::Arc
 			bytes.push 0, 'ARC'
-			bytes.push 10, element.center.x
-			bytes.push 20, element.center.y
-			bytes.push 40, element.radius
-			bytes.push 50, element.start_angle
-			bytes.push 51, element.end_angle
+			bytes.push 10, format_value(element.center.x)
+			bytes.push 20, format_value(element.center.y)
+			bytes.push 40, format_value(element.radius)
+			bytes.push 50, format_value(element.start_angle)
+			bytes.push 51, format_value(element.end_angle)
 		    when Geometry::Circle
 			bytes.push 0, 'CIRCLE'
-			bytes.push 10, element.center.x
-			bytes.push 20, element.center.y
-			bytes.push 40, element.radius
+			bytes.push 10, format_value(element.center.x)
+			bytes.push 20, format_value(element.center.y)
+			bytes.push 40, format_value(element.radius)
 		    when Geometry::Line
 			bytes.push line(element.first, element.last)
 		    when Geometry::Polyline
