@@ -106,5 +106,67 @@ describe DXF::Builder do
 	    builder.to_s.must_equal (empty_header + entities_header + square_lines +
 				     end_section + eof).join "\n"
 	end
+
+	describe "when the sketch has units" do
+	    let(:sketch) { Sketch.new }
+
+	    describe "when exporting to inches" do
+		subject { DXF::Builder.new :inches }
+		let(:square_inches) { File.read('test/fixtures/square_inches.dxf') }
+
+		before do
+		    subject.container = sketch
+		end
+
+		describe "when the units are all inches" do
+		    before do
+			sketch.push Geometry::Polygon.new [0.inches, 0.inches], [1.inches, 0.inches], [1.inches, 1.inches], [0.inches, 1.inches]
+		    end
+
+		    it "must not convert the values" do
+			subject.to_s.must_equal square_inches
+		    end
+		end
+
+		describe "when the units are all metric" do
+		    before do
+			sketch.push Geometry::Polygon.new [0.mm, 0.mm], [25.4.mm, 0.mm], [25.4.mm, 25.4.mm], [0.mm, 25.4.mm]
+		    end
+
+		    it "must convert the values" do
+			subject.to_s.must_equal square_inches
+		    end
+		end
+	    end
+
+	    describe "when exporting to millimeters" do
+		subject { DXF::Builder.new :mm }
+		let(:square_millimeters) { File.read('test/fixtures/square_millimeters.dxf') }
+
+		before do
+		    subject.container = sketch
+		end
+
+		describe "when the units are all inches" do
+		    before do
+			sketch.push Geometry::Polygon.new [0.inches, 0.inches], [1.inches, 0.inches], [1.inches, 1.inches], [0.inches, 1.inches]
+		    end
+
+		    it "must convert the values" do
+			subject.to_s.must_equal square_millimeters
+		    end
+		end
+
+		describe "when the units are all metric" do
+		    before do
+			sketch.push Geometry::Polygon.new [0.mm, 0.mm], [25.4.mm, 0.mm], [25.4.mm, 25.4.mm], [0.mm, 25.4.mm]
+		    end
+
+		    it "must not convert the values" do
+			subject.to_s.must_equal square_millimeters
+		    end
+		end
+	    end
+	end
     end
 end

@@ -1,5 +1,6 @@
 require 'geometry'
 require 'sketch'
+require 'units'
 
 module DXF
 =begin
@@ -12,13 +13,19 @@ Reading and writing of files using AutoCAD's {http://en.wikipedia.org/wiki/AutoC
 	attr_accessor :container
 
 	# Initialize with a Sketch
-	# @param [Sketch] container	A {Sketch} to export to DXF
-	def initialize(container=nil)
-	    @container = container
+	# @param [String,Symbol] units	The units to convert length values to (:inches or :millimeters)
+	def initialize(units=:mm)
+	    @units = units
 	end
 
+	# Convert the given value to the correct units and return it as a formatted string
+	# @return [String]
 	def format_value(value)
-	    "%g" % value.to_f
+	    if value.is_a? Units::Literal
+		"%g" % value.send("to_#{@units}".to_sym)
+	    else
+		"%g" % value
+	    end
 	end
 
 	def to_s
@@ -92,7 +99,11 @@ Reading and writing of files using AutoCAD's {http://en.wikipedia.org/wiki/AutoC
 	end
     end
 
-    def self.write(filename, sketch)
-	File.write(filename, Builder.new.from_sketch(sketch))
+    # Export a {Sketch} to a DXF file
+    # @param [String] filename	The path to write to
+    # @param [Sketch] sketch	The {Sketch} to export
+    # @param [Symbol] units	Convert all values to the specified units (:inches or :mm)
+    def self.write(filename, sketch, units=:mm)
+	File.write(filename, Builder.new(units).from_sketch(sketch))
     end
 end
