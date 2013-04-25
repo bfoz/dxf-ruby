@@ -1,6 +1,6 @@
 # DXF
 
-TODO: Write a gem description
+Tools for working with the popular DXF file format
 
 ## Installation
 
@@ -14,16 +14,18 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install DXF
+    $ gem install dxf
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'dxf'
 
-## Contributing
+# To export the my_sketch object in inches
+DXF.write('filename.dxf', my_sketch, :inches)
+```
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+License
+-------
+
+Copyright 2012-2013 Brandon Fosdick <bfoz@bfoz.net> and released under the BSD license.
