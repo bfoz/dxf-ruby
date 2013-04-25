@@ -13,7 +13,6 @@ describe DXF::Builder do
 
     describe "when give an empty Sketch object" do
 	it "must export a minimal file" do
-	    skip
 	    builder.container = Sketch.new
 	    builder.to_s.must_equal (empty_header + entities_header + end_section + eof).join("\n")
 	end
