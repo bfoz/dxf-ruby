@@ -63,10 +63,7 @@ describe DXF::Builder do
 
 	it "with a single Circle" do
 	    sketch.push Geometry::Circle.new [0,0], 1
-	    builder.to_s.must_equal (empty_header + entities_header + ['0', 'CIRCLE',
-								       '10', '0',
-								       '20', '0',
-								       '40', '1'] + end_section + eof).join("\n")
+	    builder.to_s.must_equal File.read('test/fixtures/circle.dxf')
 	end
 
 	it "with a single Line" do
@@ -105,6 +102,24 @@ describe DXF::Builder do
 	    sketch.push Geometry::Rectangle.new [0,0], [1,1]
 	    builder.to_s.must_equal (empty_header + entities_header + square_lines +
 				     end_section + eof).join "\n"
+	end
+
+	describe "with a Sketch" do
+	    let(:circle_sketch) { Sketch.new { push Geometry::Circle.new(center:[0,0], radius:1) } }
+
+	    describe "without a transformation" do
+		it "must unparse correctly" do
+		    sketch.push circle_sketch
+		    builder.to_s.must_equal File.read('test/fixtures/circle.dxf')
+		end
+	    end
+
+	    describe "with a transformation" do
+		it "must unparse correctly" do
+		    sketch.push circle_sketch, origin:[1,1]
+		    builder.to_s.must_equal File.read('test/fixtures/circle_translate.dxf')
+		end
+	    end
 	end
 
 	describe "when the sketch has units" do
