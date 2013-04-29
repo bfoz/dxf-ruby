@@ -84,7 +84,7 @@ Reading and writing of files using AutoCAD's {http://en.wikipedia.org/wiki/AutoC
 		     50, format_value(element.start_angle),
 		     51, format_value(element.end_angle)]
 		when Geometry::Circle
-		    [0, 'CIRCLE', center(element.center, transformation), radius(element)]
+		    [0, 'CIRCLE', 8, layer, center(element.center, transformation), radius(element)]
 		when Geometry::Edge, Geometry::Line
 		    line(element.first, element.last, layer, transformation)
 		when Geometry::Polyline
