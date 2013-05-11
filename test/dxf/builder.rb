@@ -52,7 +52,7 @@ describe DXF::Builder do
 	end
 
 	it "with a single Arc" do
-	    sketch.push Geometry::Arc.new [0,0], 1, 0, 45
+	    sketch.push Geometry::Arc.new center:[0,0], radius:1, start:0, end:45
 	    builder.to_s.must_equal (empty_header + entities_header + ['0', 'ARC',
 				     '10', '0',
 				     '20', '0',
