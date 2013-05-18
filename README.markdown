@@ -1,5 +1,7 @@
 # DXF
 
+[![Build Status](https://travis-ci.org/bfoz/ruby-dxf.png)](https://travis-ci.org/bfoz/ruby-dxf)
+
 Tools for working with the popular DXF file format
 
 ## Installation
