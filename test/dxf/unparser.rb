@@ -1,8 +1,8 @@
 require 'minitest/autorun'
 require 'dxf'
 
-describe DXF::Builder do
-    let(:builder)   { DXF::Builder.new }
+describe DXF::Unparser do
+    let(:builder)   { DXF::Unparser.new }
     let(:eof)	    { ['0', 'EOF'] }
     let(:empty_header) {['0', 'SECTION',
 			 '2', 'HEADER',
@@ -126,7 +126,7 @@ describe DXF::Builder do
 	    let(:sketch) { Sketch.new }
 
 	    describe "when exporting to inches" do
-		subject { DXF::Builder.new :inches }
+		subject { DXF::Unparser.new :inches }
 		let(:square_inches) { File.read('test/fixtures/square_inches.dxf') }
 
 		before do
@@ -155,7 +155,7 @@ describe DXF::Builder do
 	    end
 
 	    describe "when exporting to millimeters" do
-		subject { DXF::Builder.new :mm }
+		subject { DXF::Unparser.new :mm }
 		let(:square_millimeters) { File.read('test/fixtures/square_millimeters.dxf') }
 
 		before do
