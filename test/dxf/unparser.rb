@@ -2,6 +2,7 @@ require 'minitest/autorun'
 require 'dxf'
 
 describe DXF::Unparser do
+    subject { DXF::Unparser.new }
     let(:builder)   { DXF::Unparser.new }
     let(:eof)	    { ['0', 'EOF'] }
     let(:empty_header) {['0', 'SECTION',
@@ -48,6 +49,7 @@ describe DXF::Unparser do
 	}
 
 	before do
+	    subject.container = sketch
 	    builder.container = sketch
 	end
 
@@ -102,6 +104,30 @@ describe DXF::Unparser do
 	    sketch.push Geometry::Rectangle.new [0,0], [1,1]
 	    builder.to_s.must_equal (empty_header + entities_header + square_lines +
 				     end_section + eof).join "\n"
+	end
+
+	it "with a group" do
+	    Sketch::Builder.new(sketch).evaluate do
+		group origin:[1,1] do
+		    circle center:[0,0], radius:1
+		end
+	    end
+	    subject.to_s.must_equal File.read('test/fixtures/circle_translate.dxf')
+	end
+
+	describe "when the sketch has a transformation" do
+	    before do
+		sketch.transformation = Geometry::Transformation.new(origin:[2,2])
+	    end
+
+	    it "and a group" do
+		Sketch::Builder.new(sketch).evaluate do
+		    group origin:[-1,-1] do
+			circle center:[0,0], radius:1
+		    end
+		end
+		subject.to_s.must_equal File.read('test/fixtures/circle_translate.dxf')
+	    end
 	end
 
 	describe "with a Sketch" do
