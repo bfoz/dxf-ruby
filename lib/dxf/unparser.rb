@@ -39,7 +39,7 @@ module DXF
 	# Convert the given value to the correct units and return it as a formatted string
 	# @return [String]
 	def format_value(value)
-	    if value.is_a? Units::Literal
+	    if value.is_a? Units::Numeric
 		"%g" % value.send("to_#{@units}".to_sym)
 	    else
 		"%g" % value
