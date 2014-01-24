@@ -24,7 +24,6 @@ module DXF
 	def line(first, last, layer=0, transformation=nil)
 	    first, last = Geometry::Point[first], Geometry::Point[last]
 	    first, last = [first, last].map {|point| transformation.transform(point) } if transformation
-#	    first, last = transformation.transform(first), transformation.transform(last) if transformation
 
 	    [ 0, 'LINE',
 	    8, layer,
@@ -87,9 +86,9 @@ module DXF
 		    element.edges.map {|edge| line(edge.first, edge.last, layer, transformation) }
 		when Geometry::Square
 		    points = element.points
-		    points.each_cons(2).map {|p1,p2| line(p1,p2, layer, transformation) } + line(points.last, point.first, layer, transformation)
+		    points.each_cons(2).map {|p1,p2| line(p1,p2, layer, transformation) } + line(points.last, points.first, layer, transformation)
 		when Sketch
-		    transformation = transformation ? (element.transformation + transformation) : element.transformation
+		    transformation = transformation ? (transformation + element.transformation) : element.transformation
 		    element.geometry.map {|e| to_array(e, transformation)}
 	    end
 	end
