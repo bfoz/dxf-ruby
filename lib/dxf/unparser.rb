@@ -32,6 +32,17 @@ module DXF
 	    11, format_value(last.x),
 	    21, format_value(last.y)]
 	end
+
+	def lwpolyline(points, closed, layer=0, transformation=nil)
+	    [0, 'LWPOLYLINE',
+	     8, layer,
+	     90, points.length,
+	     70, closed ? 1 : 0,
+	     ] + points.map do |point|
+		 vertex = transformation ? transformation.transform(point) : point
+		 [10, 20].zip(vertex.map {|v| format_value(v)})
+	    end
+	end
 # @endgroup
 
 # @group Property Converters
@@ -81,12 +92,9 @@ module DXF
 		when Geometry::Edge, Geometry::Line
 		    line(element.first, element.last, layer, transformation)
 		when Geometry::Polyline
-		    element.edges.map {|edge| line(edge.first, edge.last, layer, transformation) }
-		when Geometry::Rectangle
-		    element.edges.map {|edge| line(edge.first, edge.last, layer, transformation) }
-		when Geometry::Square
-		    points = element.points
-		    points.each_cons(2).map {|p1,p2| line(p1,p2, layer, transformation) } + line(points.last, points.first, layer, transformation)
+		    lwpolyline(element.points, element.closed?, layer, transformation)
+		when Geometry::Rectangle, Geometry::Square
+		    lwpolyline(element.points, true, layer, transformation)
 		when Sketch
 		    transformation = transformation ? (transformation + element.transformation) : element.transformation
 		    element.geometry.map {|e| to_array(e, transformation)}

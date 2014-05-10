@@ -47,6 +47,34 @@ describe DXF::Unparser do
 	     '11', '0',
 	     '21', '0']
 	}
+	let(:square_lwpolyline) {
+	    ['0', 'LWPOLYLINE',
+	     '8', '0',	# Layer 0
+	     '90', '4',	# 4 vertices
+	     '70', '1',	# 1 = closed
+	     '10', '0',	# [0,0]
+	     '20', '0',
+	     '10', '1',	# [1,0]
+	     '20', '0',
+	     '10', '1',	# [1,1]
+	     '20', '1',
+	     '10', '0',	# [0,1]
+	     '20', '1']
+	}
+	let(:lwpolyline) {
+	    ['0', 'LWPOLYLINE',
+	    '8', '0',	# Layer 0
+	    '90', '4',	# 4 vertices
+	    '70', '0',	# 0 = open (default)
+	    '10', '0',	# [0,0]
+	    '20', '0',
+	    '10', '1',	# [1,0]
+	    '20', '0',
+	    '10', '1',	# [1,1]
+	    '20', '1',
+	    '10', '0',	# [0,1]
+	    '20', '1']
+	}
 
 	before do
 	    subject.container = sketch
@@ -83,26 +111,26 @@ describe DXF::Unparser do
 	it "with a single Polygon" do
 	    sketch.push Geometry::Polygon.new [0,0], [1,0], [1,1], [0,1]
 	    builder.to_s.must_equal (empty_header + entities_header +
-				     square_lines +
+				     square_lwpolyline +
 				     end_section + eof).join("\n")
 	end
 
 	it "with a single Polyline" do
 	    sketch.push Geometry::Polyline.new [0,0], [1,0], [1,1], [0,1]
 	    builder.to_s.must_equal (empty_header + entities_header +
-				     square_lines[0, 36] +
+				     lwpolyline +
 				     end_section + eof).join("\n")
 	end
 
 	it "with a single Rectangle" do
 	    sketch.push Geometry::Rectangle.new [0,0], [1,1]
-	    builder.to_s.must_equal (empty_header + entities_header + square_lines +
+	    builder.to_s.must_equal (empty_header + entities_header + square_lwpolyline +
 				     end_section + eof).join "\n"
 	end
 
 	it "with a single Square" do
 	    sketch.push Geometry::Rectangle.new [0,0], [1,1]
-	    builder.to_s.must_equal (empty_header + entities_header + square_lines +
+	    builder.to_s.must_equal (empty_header + entities_header + square_lwpolyline +
 				     end_section + eof).join "\n"
 	end
 
@@ -153,7 +181,7 @@ describe DXF::Unparser do
 
 	    describe "when exporting to inches" do
 		subject { DXF::Unparser.new :inches }
-		let(:square_inches) { File.read('test/fixtures/square_inches.dxf') }
+		let(:square_inches) { File.read('test/fixtures/square_lwpolyline_inches.dxf') }
 
 		before do
 		    subject.container = sketch
@@ -182,7 +210,7 @@ describe DXF::Unparser do
 
 	    describe "when exporting to millimeters" do
 		subject { DXF::Unparser.new :mm }
-		let(:square_millimeters) { File.read('test/fixtures/square_millimeters.dxf') }
+		let(:square_millimeters) { File.read('test/fixtures/square_lwpolyline_millimeters.dxf') }
 
 		before do
 		    subject.container = sketch
