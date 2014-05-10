@@ -30,4 +30,4 @@ DXF.write('filename.dxf', my_sketch, :inches)
 License
 -------
 
-Copyright 2012-2013 Brandon Fosdick <bfoz@bfoz.net> and released under the BSD license.
+Copyright 2012-2014 Brandon Fosdick <bfoz@bfoz.net> and released under the BSD license.
