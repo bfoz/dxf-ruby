@@ -40,7 +40,7 @@ module DXF
 	     70, closed ? 1 : 0,
 	     ] + points.map do |point|
 		 vertex = transformation ? transformation.transform(point) : point
-		 [10, 20].zip(vertex.map {|v| format_value(v)})
+		 [10, 20].zip(vertex.first(2).map {|v| format_value(v)})
 	    end
 	end
 # @endgroup
