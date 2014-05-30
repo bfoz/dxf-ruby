@@ -89,7 +89,7 @@ module DXF
 		    line(element.first, element.last, layer, transformation)
 		when Geometry::Polyline
 		    lwpolyline(element.points, element.closed?, layer, transformation)
-		when Geometry::Rectangle, Geometry::Square
+		when Geometry::Rectangle, Geometry::Square, Geometry::Triangle
 		    lwpolyline(element.points, true, layer, transformation)
 		when Sketch
 		    transformation = transformation ? (transformation + element.transformation) : element.transformation
