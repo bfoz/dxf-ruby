@@ -49,11 +49,7 @@ module DXF
 	# Convert the given value to the correct units and return it as a formatted string
 	# @return [String]
 	def format_value(value)
-	    if value.respond_to?(:units) and value.units
-		"%g" % value.send("to_#{@units}".to_sym)
-	    else
-		"%g" % value
-	    end
+	    ("%g" % value.to(@units)) rescue ("%g" % value)
 	end
 
 	# Emit the group codes for the center property of an element
