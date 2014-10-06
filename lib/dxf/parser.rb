@@ -29,8 +29,8 @@ module DXF
 	private
 
 	def read_pair(io)
-	    code = io.gets.chomp
-	    value = io.gets.chomp
+	    code = io.gets.strip
+	    value = io.gets.strip
 	    value = case code.to_i
 		when 1..9
 		    value.to_s
