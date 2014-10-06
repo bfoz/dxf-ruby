@@ -16,6 +16,7 @@ module DXF
 	    case type
 		when 'CIRCLE'	then Circle.new
 		when 'LINE'	then Line.new
+		when 'SPLINE'	then Spline.new
 		else
 		    raise TypeError, "Unrecognized entity type '#{type}'"
 	    end
@@ -66,6 +67,7 @@ module DXF
     end
 
     class Line < Entity
+	attr_reader :first, :last
 	attr_accessor :x1, :y1, :z1
 	attr_accessor :x2, :y2, :z2
 
@@ -82,16 +84,69 @@ module DXF
 	    end
 	end
 
+	def initialize(*args)
+	    @first, @last = *args
+	end
+
 	# @!attribute [r] first
 	#   @return [Point]  the starting point of the {Line}
 	def first
-	    point_from_values x1, y1, z1
+	    @first ||= point_from_values(x1, y1, z1)
 	end
 
 	# @!attribute [r] last
 	#   @return [Point]  the end point of the {Line}
 	def last
-	    point_from_values x2, y2, z2
+	    @last ||= point_from_values(x2, y2, z2)
+	end
+    end
+
+    class Spline < Entity
+	attr_reader :degree
+	attr_reader :knots
+	attr_reader :points
+
+	def initialize(degree:nil, knots:[], points:nil)
+	    @degree = degree
+	    @knots = knots || []
+	    @points = points || []
+	end
+    end
+
+    class Bezier < Spline
+	# @!attribute degree
+	#   @return [Number]  The degree of the curve
+	def degree
+	    points.length - 1
+	end
+
+	# @!attribute points
+	#   @return [Array<Point>]  The control points for the Bézier curve
+	attr_reader :points
+
+	def initialize(*points)
+	    @points = points.map {|v| Geometry::Point[v]}
+	end
+
+	# http://en.wikipedia.org/wiki/Binomial_coefficient
+	# http://rosettacode.org/wiki/Evaluate_binomial_coefficients#Ruby
+	def binomial_coefficient(k)
+	    (0...k).inject(1) {|m,i| (m * (degree - i)) / (i + 1) }
+	end
+
+	# @param t [Float]  the input parameter
+	def [](t)
+	    return nil unless (0..1).include?(t)
+	    result = Geometry::Point.zero(points.first.size)
+	    points.each_with_index do |v, i|
+		result += v * binomial_coefficient(i) * ((1 - t) ** (degree - i)) * (t ** i)
+	    end
+	    result
+	end
+
+	# Convert the {Bezier} into the given number of line segments
+	def lines(count=20)
+	    (0..1).step(1.0/count).map {|t| self[t]}.each_cons(2).map {|a,b| Line.new a, b}
 	end
     end
 end

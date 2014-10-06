@@ -32,4 +32,11 @@ describe DXF::Parser do
 	line.first.must_equal Geometry::Point[0, 1]
 	line.last.must_equal Geometry::Point[0, 0]
     end
+
+    it 'must parse a file with a spline' do
+	parser = File.open('test/fixtures/spline.dxf', 'r') {|f| DXF::Parser.new.parse(f) }
+	parser.entities.length.must_equal 81
+	parser.entities.all? {|a| a.kind_of? DXF::Spline }.must_equal true
+	puts parser.entities.first.lines.inspect
+    end
 end
