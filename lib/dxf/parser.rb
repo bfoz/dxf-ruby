@@ -32,6 +32,8 @@ module DXF
 	    code = io.gets.chomp
 	    value = io.gets.chomp
 	    value = case code.to_i
+		when 1..9
+		    value.to_s
 		when 10..18, 20..28, 30..37, 40..49
 		    value.to_f
 		when 50..58
@@ -115,16 +117,8 @@ module DXF
 		    when '9'
 			variable_name = value
 		    else
-			header[variable_name] = parse_header_value(code, value)
+			header[variable_name] = value
 		end
-	    end
-	end
-
-	def parse_header_value(code, value)
-	    case code
-		when '2'    then value	# String
-		else
-		    raise ParseError, "Unrecognized header value: #{code} '#{value}'"
 	    end
 	end
 
