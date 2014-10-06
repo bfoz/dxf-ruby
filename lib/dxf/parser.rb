@@ -49,7 +49,9 @@ module DXF
 	    while not io.eof?
 		code, value = read_pair(io)
 		case [code, value]
-		    when ['0', 'ENDSEC']    then return
+		    when ['0', 'ENDSEC']
+			yield code, value   # Allow the handler a chance to clean up
+			return
 		    when ['0', 'EOF']	    then return
 		    else
 			yield code, value
@@ -78,21 +80,26 @@ module DXF
 
 	# Parse the ENTITIES section
 	def parse_entities(io)
-	    spline_parser = nil
+	    parser = nil
 	    parse_pairs io do |code, value|
 		if 0 == code.to_i
-		    if spline_parser
-			entities.push spline_parser.to_entity
-			spline_parser = nil
+		    if parser
+			entities.push parser.to_entity
+			parser = nil
 		    end
 
-		    if 'SPLINE' == value
-			spline_parser = SplineParser.new
+		    # Nothing to do
+		    next if 'ENDSEC' == value
+
+		    if 'LWPOLYLINE' == value
+			parser = EntityParser.new(value)
+		    elsif 'SPLINE' == value
+			parser = SplineParser.new
 		    else
 			entities.push Entity.new(value)
 		    end
-		elsif spline_parser
-		    spline_parser.parse_pair(code.to_i, value)
+		elsif parser
+		    parser.parse_pair(code.to_i, value)
 		else
 		    entities.last.parse_pair(code, value)
 		end
@@ -104,6 +111,7 @@ module DXF
 	    variable_name = nil
 	    parse_pairs io do |code, value|
 		case code
+		    when '0' then next
 		    when '9'
 			variable_name = value
 		    else
@@ -137,6 +145,43 @@ module DXF
 	    Geometry::Point[a]
 	end
 # @endgroup
+    end
+
+    class EntityParser
+	# @!attribute points
+	#   @return [Array]  points
+	attr_accessor :points
+
+	attr_reader :handle
+	attr_reader :layer
+
+	def initialize(type_name)
+	    @flags = nil
+	    @points = Array.new { Point.new }
+	    @type_name = type_name
+
+	    @point_index = Hash.new {|h,k| h[k] = 0}
+	end
+
+	def parse_pair(code, value)
+	    case code
+		when 5 then	@handle = value		# Fixed
+		when 8 then	@layer = value		# Fixed
+		when 62 then	@color_number = value   # Fixed
+		when 10, 20, 30
+		    k = Parser.code_to_symbol(code)
+		    i = @point_index[k]
+		    @points[i] = Parser.update_point(@points[i], k => value)
+		    @point_index[k] += 1
+		when 70	then	@flags = value
+	    end
+	end
+
+	def to_entity
+	    case @type_name
+		when 'LWPOLYLINE' then LWPolyline.new(*points)
+	    end
+	end
     end
 
     class SplineParser

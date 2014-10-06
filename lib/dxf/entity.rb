@@ -3,6 +3,8 @@ require 'geometry'
 require_relative 'cluster_factory'
 
 module DXF
+    Point = Geometry::Point
+
     # {Entity} is the base class for everything that can live in the ENTITIES block
     class Entity
 	TypeError = Class.new(StandardError)
@@ -98,6 +100,21 @@ module DXF
 	#   @return [Point]  the end point of the {Line}
 	def last
 	    @last ||= point_from_values(x2, y2, z2)
+	end
+    end
+
+    class LWPolyline < Entity
+	# @!attribute points
+	#   @return [Array<Point>]  The points that make up the polyline
+	attr_reader :points
+
+	def initialize(*points)
+	    @points = points.map {|a| Point[a]}
+	end
+
+	# Return the individual line segments
+	def lines
+	    points.each_cons(2).map {|a,b| Line.new a, b}
 	end
     end
 

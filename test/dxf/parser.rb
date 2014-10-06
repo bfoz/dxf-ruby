@@ -24,6 +24,13 @@ describe DXF::Parser do
 	circle.radius.must_equal 1
     end
 
+    it 'must parse a file with a lightweight polyline' do
+	parser = File.open('test/fixtures/square_lwpolyline_inches.dxf', 'r') {|f| DXF::Parser.new.parse(f) }
+	parser.entities.length.must_equal 1
+	parser.entities.all? {|a| a.kind_of? DXF::LWPolyline }.must_equal true
+	parser.entities.first.points.length.must_equal 4
+    end
+
     it 'must parse a file with a square' do
 	parser = File.open('test/fixtures/square_inches.dxf', 'r') {|f| DXF::Parser.new.parse(f) }
 	parser.entities.length.must_equal 4
@@ -35,7 +42,7 @@ describe DXF::Parser do
 
     it 'must parse a file with a spline' do
 	parser = File.open('test/fixtures/spline.dxf', 'r') {|f| DXF::Parser.new.parse(f) }
-	parser.entities.length.must_equal 81
+	parser.entities.length.must_equal 82
 	parser.entities.all? {|a| a.kind_of? DXF::Spline }.must_equal true
 	puts parser.entities.first.lines.inspect
     end
