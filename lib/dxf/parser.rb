@@ -19,6 +19,7 @@ module DXF
 
 	def parse(io)
 	    parse_pairs io do |code, value|
+		next if '999' == code
 		raise ParseError, "DXF files must begin with group code 0, not #{code}" unless '0' == code
 		raise ParseError, "Expecting a SECTION, not #{value}" unless 'SECTION' == value
 		parse_section(io)
