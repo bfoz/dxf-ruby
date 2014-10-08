@@ -179,37 +179,26 @@ module DXF
 	end
     end
 
-    class SplineParser
+    class SplineParser < EntityParser
 	# @!attribute points
 	#   @return [Array]  points
 	attr_accessor :points
 
 	attr_reader :closed, :periodic, :rational, :planar, :linear
 	attr_reader :degree
-	attr_reader :handle
 	attr_reader :knots
-	attr_reader :layer
 
 	def initialize
+	    super 'SPLINE'
 	    @fit_points = []
 	    @knots = []
-	    @points = Array.new { Point.new }
 	    @weights = []
 
 	    @fit_point_index = Hash.new {|h,k| h[k] = 0}
-	    @point_index = Hash.new {|h,k| h[k] = 0}
 	end
 
 	def parse_pair(code, value)
 	    case code
-		when 5 then	    @handle = value	    # Fixed
-		when 8 then	    @layer = value	    # Fixed
-		when 62 then    @color_number = value   # Fixed
-		when 10, 20, 30
-		    k = Parser.code_to_symbol(code)
-		    i = @point_index[k]
-		    @points[i] = Parser.update_point(@points[i], k => value)
-		    @point_index[k] += 1
 		when 11, 21, 31
 		    k = Parser.code_to_symbol(code)
 		    i = @fit_point_index[k]
@@ -233,6 +222,8 @@ module DXF
 		when 72 then    @num_knots = value
 		when 73 then    @num_control_points = value
 		when 74 then    @num_fit_points = value
+		else
+		    super
 	    end
 	end
 
