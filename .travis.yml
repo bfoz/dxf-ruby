@@ -1,0 +1,11 @@
+language: ruby
+rvm:
+- 2.0.0
+deploy:
+  provider: rubygems
+  api_key:
+    secure: S0O4Y3l92qkVXey7ZqIQnRt+81UflIXtsRLOlqONmk2eJ+OLWF8PnQf2PHLuCN39xtaNRPRmjzXxq5SqIvZdJNveAWhTMR+JerW6itGEa1pDEeqtbLsZ42uzfoUdw4kuw/tr2cB8FaNujtRndbzsqRsEinfJ/zlPO606C3CdodI=
+  gem: dxf
+  on:
+    tags: true
+    repo: bfoz/dxf-ruby
