@@ -15,6 +15,17 @@ describe DXF::Parser do
 	circle.radius.must_equal 1
     end
 
+    it 'must parse a file with some arcs' do
+      parser = File.open('test/fixtures/filleted-box.dxf', 'r') {|f| DXF::Parser.new.parse(f) }
+    	parser.entities.length.must_equal 8
+    	circle = parser.entities.last
+    	circle.must_be_instance_of(DXF::Arc)
+    	circle.center.must_equal Geometry::Point[11,11]
+    	circle.radius.must_equal 1
+      circle.a1.must_equal 180.0
+      circle.a2.must_equal 270.0
+    end
+
     it 'must parse a file with a translated circle' do
 	parser = File.open('test/fixtures/circle_translate.dxf', 'r') {|f| DXF::Parser.new.parse(f) }
 	parser.entities.length.must_equal 1

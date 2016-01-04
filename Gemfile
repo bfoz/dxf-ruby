@@ -7,4 +7,5 @@ gem 'units', github: 'bfoz/units-ruby'
 
 group :test do
     gem 'rake'
+    gem 'minitest'
 end

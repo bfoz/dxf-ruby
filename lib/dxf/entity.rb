@@ -19,6 +19,7 @@ module DXF
 		when 'CIRCLE'	then Circle.new
 		when 'LINE'	then Line.new
 		when 'SPLINE'	then Spline.new
+    when 'ARC' then Arc.new
 		else
 		    raise TypeError, "Unrecognized entity type '#{type}'"
 	    end
@@ -66,6 +67,20 @@ module DXF
 	    a.pop until a.last
 	    Geometry::Point[*a]
 	end
+    end
+
+    class Arc < Circle
+      attr_accessor :a1, :a2
+
+      def parse_pair(code, value)
+    	    case code
+    		when '50'   then self.a1 = value.to_f
+    		when '51'   then self.a2 = value.to_f
+    		else
+    		    super   # Handle common and unrecognized codes
+    	    end
+    	end
+
     end
 
     class Line < Entity
