@@ -16,6 +16,7 @@ module DXF
 
 	def self.new(type)
 	    case type
+		when 'ARC'	then Arc.new
 		when 'CIRCLE'	then Circle.new
 		when 'LINE'	then Line.new
 		when 'SPLINE'	then Spline.new
@@ -66,6 +67,20 @@ module DXF
 	    a.pop until a.last
 	    Geometry::Point[*a]
 	end
+    end
+
+    class Arc < Circle
+      attr_accessor :start_angle, :end_angle
+
+      def parse_pair(code, value)
+    	    case code
+    		when '50'   then self.start_angle = value.to_f
+    		when '51'   then self.end_angle = value.to_f
+    		else
+    		    super   # Handle common and unrecognized codes
+    	    end
+    	end
+
     end
 
     class Line < Entity
