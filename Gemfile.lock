@@ -1,0 +1,40 @@
+GIT
+  remote: git://github.com/bfoz/sketch.git
+  revision: 1f7977e3f93d801a6a970e74508510055ed2e12e
+  specs:
+    sketch (0.4)
+      geometry (~> 6.4)
+
+GIT
+  remote: git://github.com/bfoz/units-ruby.git
+  revision: e198cdb4e6978676b9e131ff8540b44aa7f57595
+  specs:
+    units (3.0.1)
+
+PATH
+  remote: .
+  specs:
+    dxf (0.3.1)
+      geometry (~> 6.4)
+      sketch (~> 0.4)
+      units (~> 3.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    geometry (6.5)
+    minitest (5.9.0)
+    rake (11.2.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  dxf!
+  minitest
+  rake
+  sketch!
+  units!
+
+BUNDLED WITH
+   1.12.5

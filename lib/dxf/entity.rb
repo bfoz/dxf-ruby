@@ -13,6 +13,7 @@ module DXF
 
 	attr_accessor :handle
 	attr_accessor :layer
+  attr_accessor :color_number
 
 	def self.new(type)
 	    case type
@@ -30,9 +31,11 @@ module DXF
 	    #  These are from the table that starts on page 70 of specification
 	    case code
 		when '5'
-		    handle = value
+		    self.handle = value
 		when '8'
-		    layer = value
+		    self.layer = value
+    when '62'
+        self.color_number = value.to_i
 		else
 		    p "Unrecognized entity group code: #{code} #{value}"
 	    end
